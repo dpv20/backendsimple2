@@ -39,10 +39,7 @@ if __name__ == '__main__':
     port = args.port
 
     app = create_app()
-    print(f"GMAIL_APP_PASSWORD: {GMAIL_APP_PASSWORD}")
-    print(f"RECAPTCHA_SECRET_KEY: {RECAPTCHA_SECRET_KEY}")
-    print(f"GMAIL_ADDRESS: {GMAIL_ADDRESS}")
-    
+  
     # Enable CORS for the frontend to access the backend
     #CORS(app, resources={r"/*": {"origins": ['http://localhost:3000', 'http://localhost:3002', 'http://ec2-3-142-160-157.us-east-2.compute.amazonaws.com/']}})
     #CORS(app)
