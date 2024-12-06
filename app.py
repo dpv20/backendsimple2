@@ -20,7 +20,7 @@ if not GMAIL_ADDRESS:
 def create_app():
     app = Flask(__name__)
     #INSEGURO!
-    CORS(app, resources={r"/*": {"origins": ['http://whitemirror.cl', 'http://ec2-3-142-160-157.us-east-2.compute.amazonaws.com/']}})
+    CORS(app, resources={r"/*": {"origins": ['https://whitemirror.cl', 'http://ec2-3-142-160-157.us-east-2.compute.amazonaws.com/']}})
     #CORS(app)
     # Load the configuration from the Config class in config.py
     app.config.from_object('config.Config')
