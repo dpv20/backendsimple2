@@ -127,8 +127,8 @@ def send_feedback_email():
     )
     recaptcha_result = recaptcha_response.json()
     
-    #if not recaptcha_result.get('success'):
-    #    return jsonify({'error': 'Invalid reCAPTCHA token'}), 400
+    if not recaptcha_result.get('success'):
+        return jsonify({'error': 'Invalid reCAPTCHA token'}), 400
 
     # Prepare the email body
     body = (
