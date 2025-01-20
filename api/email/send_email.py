@@ -97,3 +97,57 @@ def send_email_route():
         return jsonify({'status': 'Email sent successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@email_bp.route('/send-feedback', methods=['POST'])
+def send_feedback_email():
+    data = request.json
+    user_email = data.get('user_email')
+    name = data.get('name')
+    subject = data.get('subject')
+    feedback = data.get('feedback')
+    captcha_token = data.get('captchaToken')
+
+    # Ensure user_email, subject, and feedback are provided
+    if not user_email:
+        return jsonify({'error': 'User email is required'}), 400
+    if not subject:
+        return jsonify({'error': 'Subject is required'}), 400
+    if not feedback:
+        return jsonify({'error': 'Feedback is required'}), 400
+    if not captcha_token:
+        return jsonify({'error': 'reCAPTCHA token is required'}), 400
+
+    # Verify reCAPTCHA token
+    recaptcha_response = requests.post(
+        "https://www.google.com/recaptcha/api/siteverify",
+        data={
+            'secret': RECAPTCHA_SECRET_KEY,
+            'response': captcha_token
+        }
+    )
+    recaptcha_result = recaptcha_response.json()
+
+    if not recaptcha_result.get('success'):
+        return jsonify({'error': 'Invalid reCAPTCHA token'}), 400
+
+    # Prepare the email body
+    body = (
+        f"Estimado {name}, gracias por su feedback, el cual fue el siguiente:\n\n"
+        f"{feedback}"
+    )
+
+    # Send the email
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = "mejorsaludmental@gmail.com"
+        msg['To'] = user_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+            server.sendmail(msg['From'], msg['To'], msg.as_string())
+
+        return jsonify({'status': 'Email sent successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
